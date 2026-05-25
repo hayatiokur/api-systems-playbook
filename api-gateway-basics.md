@@ -5,7 +5,7 @@ API gateways are useful when there are multiple backend services that need to wo
 
 Another big benefit is simplicity for clients. Clients do not need to know where services live or how backend infrastructure changes over time. They communicate with a single entry point while the gateway handles the complexity behind the scenes.
 
-Here are some awesome sources to watch:
+Here is an awesome sources to watch:
 
 - [API Gateways Explained](https://www.youtube.com/watch?v=6ULyxuHKxg8&t=12s)
   
