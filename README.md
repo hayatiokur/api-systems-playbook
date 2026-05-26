@@ -11,7 +11,7 @@ My background includes:
 - Infrastructure and developer experience
 - Marketplace and classifieds products
 
-**This repository is my learning and systems thinking playground.**.
+**This repository is my learning and systems thinking playground.**
 
 The goal of this project is not to collect random notes or course summaries. I am using this space to deepen my understanding of:
 
