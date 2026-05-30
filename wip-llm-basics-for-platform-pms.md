@@ -6,5 +6,3 @@ tokens
 cost basics
 👉 Output:
  Call API and generate something simple
-
-
