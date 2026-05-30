@@ -13,24 +13,6 @@ My background includes:
 
 **This repository is my learning and systems thinking playground.**
 
-The goal of this project is not to collect random notes or course summaries. I am using this space to deepen my understanding of:
-
-- API platforms
-- Authentication and security
-- Infrastructure and distributed systems
-- Developer experience
-- AI applications for API and platform products
+The goal of this project is not to collect random notes or course summaries. I am using this space to deepen my understanding of API platforms as well as AI applications for API and platform products. 
 
 Most files here are short one pagers where I try to understand concepts, document tradeoffs and think like a platform PM.
-
-Topics include:
-
-- API gateways
-- OAuth and auth systems
-- Rate limiting
-- Observability
-- Kafka and async systems
-- System design
-- AI for API platforms
-
-Thanks for visiting and feel free to explore.
