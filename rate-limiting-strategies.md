@@ -15,4 +15,4 @@ You can also rate limit your APIs based on user, account, IP, per service or glo
 
 ## Burst Handling & Tradeoffs
 
-You should also think of what load your API can handle and how users use it when rate limiting. Lets say you set 1 req per second rate limiting. But your user is slient for hours and wants/needs to make 60 request in one second. Such policy would hurt such a user. So when providing rate limiting policy, you should consider your infrastructure as well as the natural user behaviour. 
+You should also think of what load your API can handle and how users use it when rate limiting. Lets say you set 1 req per second rate limiting. But your user is slient for hours and wants/needs to make 60 request in one second. Such policy would hurt such a user. So when providing rate limiting policy, you should consider your infrastructure as well as the natural user behaviour.
