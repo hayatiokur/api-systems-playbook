@@ -7,4 +7,3 @@ topics
 👉 Output:
  Diagram:
  API platform + async processing
-
