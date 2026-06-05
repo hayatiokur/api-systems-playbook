@@ -2,17 +2,33 @@
 
 Hi and welcome 👋
 
-I am Hayati, a Technical Product Manager working on API and infrastructure platforms at Semrush.
+I am Hayati, a Technical Product Manager currently working on API and infrastructure platforms at Semrush.
 
-My background includes:
-
-- API development and integrations
-- API management and platform thinking
-- Infrastructure and developer experience
-- Marketplace and classifieds products
+Over the years I have worked on API integrations, API products, marketplaces, classifieds websites and platform products.
 
 **This repository is my learning and systems thinking playground.**
 
-The goal of this project is not to collect random notes or course summaries. I am using this space to deepen my understanding of API platforms as well as AI applications for API and platform products. 
+Most documents here are intentionally short. The goal is not to create academic documentation, but to learn concepts, understand tradeoffs and think through technical decisions from a Platform PM perspective.
 
-Most files here are short one pagers where I try to understand concepts, document tradeoffs and think like a platform PM.
+Topics currently include: API gateways, Authentication, Rate limiting, Observability, Kafka and async systems, System design, AI for platform products
+
+If you find mistakes, feel free to reach out. I am learning too 😄
+
+---
+
+## ⭐ Featured Work
+
+### Designing an API Platform for a SaaS Product
+
+A system design exercise that combines:
+
+* API Gateway
+* Authentication
+* Rate Limiting
+* Observability
+* Kafka and Async Processing
+* Scalability and Resilience
+
+This is the document that brings together all concepts covered in this repository.
+
+👉 Start here: [6_FEATURED_saas-api-platform-design.md]
