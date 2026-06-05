@@ -16,7 +16,7 @@ If you find mistakes, feel free to reach out. I am learning too 😄
 
 ---
 
-## ⭐ Featured Work
+## ⭐ Featured Work ⭐
 
 ### Designing an API Platform for a SaaS Product
 
