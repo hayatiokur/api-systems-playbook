@@ -1,122 +1,36 @@
-# Async Systems and Apache Kafka
+# Apache Kafka
 
 ## Purpose
 
-Kafka provides an event driven architecture, it is great for decoupling different crucial services, it is resilient and scalable. 
+Kafka provides an event driven architecture. It is great for decoupling (crucial) services, improving scalability and building resilient systems. Instead of services calling each other directly, they communicate through events.
 
 ## Core Concepts
 
 ### Producers
-
-This could be anything that "produce" and write messages such as an API, order data, new users, updated product data etc.  
-
----
+This could be anything that produces and writes messages such as APIs, order systems, user services or product services. Examples: product updated, new user created, order completed etc.
 
 ### Topics
 
-Think:
-
-* Logical channel for messages
-* How are messages grouped?
-
-Examples:
-
-* user-events
-* billing-events
-* analytics-events
-
----
+Messages in the qeueu are process and stored in topics and they are usually grouped by business domain or event type.
 
 ### Partitions
 
-Think:
-
-* Why split a topic?
-* Parallel processing
-* Higher throughput
-* Ordering only guaranteed within partition
-
----
+Topics can be split into multiple partitions. Partitions allow Kafka to process messages in parallel and achieve much higher throughput. One important detail is that message ordering is only guaranteed within the same partition.
 
 ### Brokers and Clusters
 
-Think:
-
-* What is a broker?
-* Why multiple brokers?
-* What is a Kafka cluster?
-
-Question:
-What happens if one broker dies?
-
----
+A broker is a Kafka server that stores and serves messages. Multiple brokers form a Kafka cluster. Kafka distributes partitions across brokers and usually keeps replicas on different brokers. If one broker dies, another broker can become leader and continue serving traffic. This is one of the main reasons Kafka is considered resilient.
 
 ### Consumers and Consumer Groups
 
-Think:
-
-* Who processes events?
-* Why consumer groups?
-
-Keywords:
-
-* scaling
-* load distribution
-* parallel processing
-
----
-
-## Why Kafka is Resilient
-
-Think:
-
-* replication
-* leader and followers
-* failover
-* no single point of failure
-
-Question:
-Why do large companies trust Kafka for critical workloads?
-
----
-
-## Semrush Example
-
-Event:
-User subscribed
-
-Producer:
-Subscription Service
-
-Topic:
-user-subscriptions
-
-Consumers:
-
-* Billing
-* Analytics
-* CRM
-* Email Service
-
-Question:
-Why is this better than calling all services directly?
-
----
+This is the opposite of producers. Consumers are systems that read messages from Kafka topics. Example: CRM, Analytics etc. Consumer groups allow multiple consumers to share the workload and process messages in parallel. This improves scalability and prevents a single consumer from becoming a bottleneck.
 
 ## Tradeoffs
 
-Think:
+As explained above, Kafka is great for scalability, throughput and resilience. However, it also adds significant complexity. Debugging becomes harder because requests are no longer moving through a simple synchronous flow. Kafka clusters also require monitoring, maintenance and engineers who understand distributed systems.
 
-Benefits:
+If a company runs a relatively small system, can tolerate occasional delays or data loss, and does not need large scale event processing, Kafka may be unnecessary complexity.
 
-* scalability
-* resilience
-* loose coupling
-
-Challenges:
-
-* more complexity
-* eventual consistency
-* debugging becomes harder
+![Kafka Architecture](https://github.com/user-attachments/assets/a5d8cef2-d56c-40d8-951f-035968f3dd47)
 
 <img width="1536" height="1024" alt="Kafka, 2026, 06_39_59 PM" src="https://github.com/user-attachments/assets/a5d8cef2-d56c-40d8-951f-035968f3dd47" />
