@@ -32,5 +32,3 @@ As explained above, Kafka is great for scalability, throughput and resilience. H
 If a company runs a relatively small system, can tolerate occasional delays or data loss, and does not need large scale event processing, Kafka may be unnecessary complexity.
 
 ![Kafka Architecture](https://github.com/user-attachments/assets/a5d8cef2-d56c-40d8-951f-035968f3dd47)
-
-<img width="1536" height="1024" alt="Kafka, 2026, 06_39_59 PM" src="https://github.com/user-attachments/assets/a5d8cef2-d56c-40d8-951f-035968f3dd47" />
