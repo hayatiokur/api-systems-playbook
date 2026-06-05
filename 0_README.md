@@ -31,4 +31,4 @@ A system design exercise that combines:
 
 This is the document that brings together all concepts covered in this repository.
 
-👉 **[Start here](https://github.com/hayatiokur/api-systems-playbook/blob/main/6_FEATURED_saas-api-platform-design.md)**
+👉 **[Start here](https://github.com/hayatiokur/api-systems-playbook/blob/main/6_⭐_saas-api-platform-design.md)**
