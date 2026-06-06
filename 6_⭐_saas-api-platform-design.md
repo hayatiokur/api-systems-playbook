@@ -2,164 +2,219 @@
 
 ### Designing an API Platform for a SaaS Product
 
-This is a small case study like document that combines API gateways, authentication, rate limiting, observability and Kafka into a complete platform design.
+This is a small system design case study that combines API gateways, authentication, rate limiting, observability and Kafka into a complete platform design.
 
-I assume the main platform is middleware that sit between brands (like adidas) and marketplaces (like amazon). Brands/retailers interact with marketplaces through this platform, they send product, order, price, image data. They use this platform because then they dont need to integrate to multiple marketplaces and this platform does error handling and handles scalibility much better. 
+The example platform acts as middleware between brands and marketplaces. Instead of integrating with - lets say - Amazon, eBay and other marketplaces directly, brands integrate once with the platform, which handles integrations, scaling and reliability. Product, inventory, pricing, image and order data flow through the platform. 
 
-I assume monetization is commision (from orders) and usage (rps) based - there is a free tier and if you want to push more products or integrate to more market places, you pay more.  
+I assume monetization is based on API usage, marketplace integrations and transaction volume.
 
 ---
 
 ## High Level Architecture
 
-Add your diagram here.
+```text
+[MIRO DIAGRAM PLACEHOLDER]
 
-Example:
+Brand / Retailer
+        │
+        ▼
+   API Gateway
+        │
+        ▼
+ Backend APIs
+        │
+        ▼
+      Kafka
+        │
+ ┌──────┼──────┬─────────┐
+ ▼      ▼      ▼         ▼
+Billing Analytics CRM Notifications
+```
 
-Client
-↓
-API Gateway
-↓
-Backend APIs
-↓
-Kafka
-↓
-Billing / Analytics / Notifications / CRM
+The API Gateway acts as the entry point for all traffic. Backend services handle business logic while Kafka enables asynchronous processing for downstream systems.
 
-Explain why you chose this architecture.
-
----
-
-## API Gateway
-
-Think:
-- Routing
-- Single entry point
-- Authentication
-- Rate limiting
-- Monitoring
-
-Question:
-Why not expose backend services directly?
+This architecture keeps the platform modular. New services can subscribe to Kafka events without requiring changes to existing services. It also keeps APIs responsive because non critical work can be processed asynchronously.
 
 ---
 
 ## Authentication
 
-Think:
-- OAuth2
-- JWT
-- Refresh tokens
-- API keys
+```text
+[MIRO DIAGRAM PLACEHOLDER]
 
-Question:
-How do clients authenticate?
+Client
+  │
+  ▼
+OAuth2 Login
+  │
+  ▼
+Access Token (JWT)
+  │
+  ▼
+API Gateway
+  │
+  ▼
+Backend Service
+```
+
+Customers authenticate using OAuth2 and receive JWT access tokens. The gateway validates the token before routing requests.
+
+JWT allows authentication to happen locally at the gateway without calling a central authentication service for every request. This reduces latency and scales well as traffic grows.
+
+For server to server integrations, API keys may also be supported.
 
 ---
 
 ## Rate Limiting
 
-Design a policy.
+```text
+[MIRO DIAGRAM PLACEHOLDER]
 
-Example:
+Client
+  │
+  ▼
+API Gateway
+  │
+  ├─ Authentication
+  ├─ Rate Limit Check
+  └─ Routing
+  │
+  ▼
+Backend Service
+```
 
-Free:
-- 100 req/min
+Rate limiting protects the platform from abuse while ensuring fair usage across customers.
 
-Pro:
-- 1000 req/min
+Example limits:
 
-Enterprise:
-- custom
+* Free: 100 req/min
+* Pro: 1000 req/min
+* Enterprise: custom
 
-Think:
-- Sliding window
-- Per account limits
-- Global safeguards
-- Burst handling
+The platform uses sliding window rate limiting with per account limits and global safeguards.
+
+Burst traffic is allowed within reasonable limits to avoid hurting legitimate usage patterns.
 
 ---
 
 ## Observability
 
-Think:
-- Logs
-- Metrics
-- Traces
+```text
+[MIRO DIAGRAM PLACEHOLDER]
 
-Monitor:
-- Latency
-- Error rate
-- Throughput
-- Success rate
+Request
+  │
+  ▼
+Gateway
+  │
+  ├─ Logs
+  ├─ Metrics
+  └─ Traces
+  │
+  ▼
+Monitoring Platform
+```
 
-Example alerts:
-- 5xx spike
-- Latency > 2 sec
+Logs, metrics and traces provide visibility into platform health and behavior.
+
+Key metrics:
+
+* Latency
+* Error Rate
+* Throughput
+* Success Rate
+
+Typical alerts include spikes in 5xx errors, unusual latency increases and traffic anomalies.
+
+Observability is critical because it allows engineers to detect and troubleshoot issues before customers notice them.
 
 ---
 
 ## Async Processing
 
-Think:
-- What should happen asynchronously?
+```text
+[MIRO DIAGRAM PLACEHOLDER]
 
-Examples:
-- Billing
-- Analytics
-- Notifications
-- CRM updates
+Product Updated
+        │
+        ▼
+    API Service
+        │
+        ▼
+       Kafka
+        │
+ ┌──────┼──────┬─────────┐
+ ▼      ▼      ▼         ▼
+Billing Analytics CRM Notifications
+```
 
-Question:
-Why use Kafka instead of direct service calls?
+Not every action needs to happen during the API request.
+
+When product, inventory or order data changes, events are published to Kafka. Downstream services consume these events independently.
+
+This reduces coupling between services and keeps API response times low even when multiple systems need to react to the same event.
 
 ---
 
 ## Scalability and Resilience
 
-Think:
-- Multiple gateway instances
-- Load balancer
-- Kafka replication
-- Failover mechanisms
-- Consumer groups
+```text
+[MIRO DIAGRAM PLACEHOLDER]
 
-Question:
-What happens when a service or broker dies?
+                Load Balancer
+                       │
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+    Gateway 1      Gateway 2      Gateway 3
+                       │
+                       ▼
+                  Kafka Cluster
+               Broker 1 Broker 2 Broker 3
+```
+
+Multiple gateway instances run behind a load balancer so traffic can be distributed across the platform.
+
+Kafka brokers replicate data across the cluster. If a broker fails, another broker can take over and continue serving traffic.
+
+Consumer groups allow event processing to scale horizontally as usage grows.
+
+This architecture removes major single points of failure and provides a foundation for high availability.
 
 ---
 
 ## Tradeoffs
 
-Gateway:
-- +
+Every architectural decision introduces tradeoffs.
 
-- -
+API Gateway:
+
+* * Centralized routing, auth and monitoring
+* * Additional infrastructure and latency
 
 JWT:
-- +
 
-- -
+* * Scalable and stateless
+* * Token revocation is harder
 
 Kafka:
-- +
 
-- -
+* * Scalability, resilience and loose coupling
+* * Operational complexity
 
-Rate limiting:
-- +
+Rate Limiting:
 
-- -
+* * Infrastructure protection and monetization
+* * Poorly configured limits can hurt user experience
 
-Question:
-What complexity are we accepting in exchange for scalability and resilience?
+The overall tradeoff is accepting additional system complexity in exchange for scalability, resilience and operational flexibility.
 
 ---
 
 ## Conclusion
 
-Summarize:
+This architecture provides a scalable platform for connecting brands and marketplaces through a single integration layer.
 
-- Why this architecture was chosen
-- Main strengths
-- Main risks
+The combination of API Gateway, OAuth2, JWT, rate limiting, observability and Kafka creates a platform that can grow with customer demand while remaining reliable and manageable.
+
+The biggest challenge is operational complexity, but for a platform handling large volumes of product, inventory and order data, the benefits outweigh the costs.
+
