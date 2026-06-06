@@ -89,37 +89,6 @@ Log File / Metrics / Errors
 
 ## Next versions
 
-V2
-
-Support:
-
-Apache
-Nginx
-Kong
-AWS API Gateway
-
-log formats.
-
-V3
-
-Generate:
-
-Incident Report
-
-automatically.
-
-V4
-
-Add observability metrics.
-
-Upload:
-
-logs
-metrics
-traces
-
-and correlate them.
-
 V5
 
 Chat with API documentation.
