@@ -2,45 +2,31 @@
 
 ## What is an LLM
 
-Large Language Models predict the next token based on previous tokens. They are not databases and can generate different responses for the same prompt.
+Large Language Models (LLMs) predict the next token based on previous tokens. They are not databases and they do not "know" facts in the traditional sense. Because of this, the same prompt can sometimes generate slightly different responses.
 
 ## Tokens
 
-Models process text as tokens, not words.
-
-Cost is usually based on:
-
-* Input tokens
-* Output tokens
-
-## Prompts
-
-Prompts are instructions given to the model.
-
-Good prompts usually provide:
-
-* Context
-* Task
-* Expected output format
+Models process text as tokens rather than words. Cost is usually based on input and output tokens. More text means more tokens and therefore higher cost.
 
 ## Structured Outputs
 
-Instead of free text, models can return structured responses such as JSON.
+Instead of free text, models can return structured data such as JSON.
 
-This is useful for applications that need predictable outputs.
+This is useful when building applications because the output becomes predictable and easier to process.
 
-## Cost Considerations
+## Context Window and Cost
 
-Cost depends on:
+Models can only process a limited amount of text at once. The prompt, conversation history and response all count towards this limit.
+
+Cost depends mainly on:
 
 * Model choice
 * Input size
 * Output size
-* Number of requests
 
-## Example Use Case
+Larger models and longer prompts usually cost more.
 
-Analyze API logs and return root cause, severity & recommended fix.
+## Example API Call
 
 ```bash
 curl https://api.openai.com/v1/responses \
