@@ -14,7 +14,7 @@ I assume monetization is based on API usage, marketplace integrations and transa
 
 ### Outbound Flow
 
-<img width="1265" height="790" alt="image" src="https://github.com/user-attachments/assets/70f8d32b-0715-4f48-90c4-e16d802a4646" />
+<img width="1259" height="794" alt="image" src="https://github.com/user-attachments/assets/c64a5200-a6a0-4644-bca0-979ea10b11c6" />
 
 ### Inbound Flow
 
