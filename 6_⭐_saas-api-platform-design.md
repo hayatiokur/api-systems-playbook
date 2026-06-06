@@ -39,8 +39,8 @@ Billing Analytics CRM Notifications Marketplace-connectors
                                  ▼      ▼         ▼         ▼
                                Amazon eBay     Zalando  Shopify
 ```
-```text
 
+```text
 
                      INBOUND FLOW
 
@@ -64,9 +64,11 @@ Billing Analytics CRM Notifications Order Service
 
 The platform acts as middleware between brands and marketplaces.
 
-Outbound events such as product updates, inventory updates and price changes are sent to marketplaces.
+For outbound traffic, brands send product, inventory, pricing and image data to the platform. The platform then distributes this data to one or more marketplaces.
 
-Inbound events such as new orders, shipment updates and returns are collected from marketplaces and stored in the platform.
+For inbound traffic, marketplaces send order, shipment and return information back to the platform. This data is stored and later made available to customers.
+
+The platform is designed around Kafka. Almost everything becomes an event, which makes the system easier to scale and extend over time.
 
 ---
 
@@ -92,9 +94,9 @@ Backend Service
 
 Customers authenticate using OAuth2 and receive JWT access tokens.
 
-JWT validation happens at the gateway, allowing requests to be authenticated without querying a central session store.
+I chose JWT because the API Gateway can validate tokens directly without calling another service on every request. This keeps authentication fast and scalable.
 
-API keys may also be supported for server to server integrations.
+For simpler integrations, API keys can also be supported.
 
 ---
 
@@ -116,7 +118,7 @@ API Gateway
 Backend Service
 ```
 
-Rate limiting protects the platform and supports usage based monetization.
+Rate limiting protects the platform from abuse and also supports monetization.
 
 Example plans:
 
@@ -124,7 +126,7 @@ Example plans:
 * Pro: 1000 req/min
 * Enterprise: custom
 
-The platform uses sliding window rate limiting with per account limits and global safeguards.
+I would use sliding window rate limiting because it creates smoother traffic patterns and avoids traffic spikes around window boundaries.
 
 ---
 
@@ -146,16 +148,16 @@ Gateway
 Monitoring Platform
 ```
 
-The platform collects logs, metrics and traces to understand system behavior and troubleshoot incidents.
+Logs, metrics and traces help engineers understand what is happening inside the platform.
 
-Key metrics:
+The most important metrics would probably be:
 
 * Latency
 * Error Rate
 * Throughput
 * Success Rate
 
-Alerts are configured for latency spikes, error spikes and unusual traffic patterns.
+Alerts should be configured for things like latency spikes, increased error rates and unusual traffic patterns.
 
 ---
 
@@ -177,11 +179,11 @@ Product Updated
 Billing Analytics CRM Notifications Marketplace Connectors
 ```
 
-The platform uses Kafka as its event backbone.
+Kafka is the backbone of the platform.
 
-Business events such as ProductUpdated, InventoryChanged and OrderCreated are published to Kafka and processed independently by downstream services.
+When something happens, for example a product update, inventory update or new order, an event is published to Kafka.
 
-This reduces coupling and allows services to scale independently.
+Different systems can then react independently. Marketplace connectors, analytics, billing and notification services can all process the same event without being directly connected to each other.
 
 ---
 
@@ -213,13 +215,15 @@ Order Service
       └────────► CSV/XML Export
 ```
 
-Customers can receive order data through multiple mechanisms depending on their technical maturity and integration capabilities.
+Different customers have different technical capabilities, so I would support multiple ways of receiving order data.
 
-Supported options:
+Options include:
 
-* Pull via API
-* Push via Webhooks
-* Scheduled CSV/XML exports
+* API Pull
+* Webhook Push
+* CSV/XML Export
+
+This allows both modern and legacy systems to integrate with the platform.
 
 ---
 
@@ -242,11 +246,11 @@ Supported options:
      Broker 1       Broker 2       Broker 3
 ```
 
-Multiple gateway instances run behind a load balancer.
+Multiple API Gateway instances run behind a load balancer.
 
-Kafka brokers replicate data across the cluster and consumer groups allow horizontal scaling.
+Kafka data is replicated across multiple brokers, so a single broker failure should not bring the platform down.
 
-If a gateway instance, service or broker fails, the platform continues operating with minimal disruption.
+Consumer groups allow processing capacity to grow as platform traffic grows.
 
 ---
 
@@ -254,7 +258,7 @@ If a gateway instance, service or broker fails, the platform continues operating
 
 ### API Gateway
 
-* * Centralized authentication, routing and monitoring
+* * Centralized routing, authentication and monitoring
 * * Additional infrastructure and latency
 
 ### JWT
@@ -264,24 +268,27 @@ If a gateway instance, service or broker fails, the platform continues operating
 
 ### Kafka
 
-* * Scalability, resilience and loose coupling
-* * Higher operational complexity
+* * Scalable, resilient and loosely coupled
+* * More operational complexity
 
 ### Rate Limiting
 
-* * Infrastructure protection and monetization
-* * Aggressive limits may hurt user experience
+* * Protects infrastructure and supports monetization
+* * Can hurt user experience if limits are too aggressive
 
 ### Event Driven Architecture
 
-* * Highly scalable and resilient
+* * Highly scalable and flexible
 * * Eventual consistency between systems
 
 ---
 
 ## Conclusion
 
-This architecture provides a scalable marketplace integration platform where brands integrate once and communicate with many marketplaces.
+I think this architecture is a good fit for a marketplace integration platform.
 
-The combination of API Gateway, OAuth2, JWT, rate limiting, observability and Kafka creates a resilient platform that can process large volumes of product, inventory and order data while remaining flexible and extensible.
+Brands integrate once and can communicate with many marketplaces through a single platform.
+
+The combination of API Gateway, OAuth2, JWT, rate limiting, observability and Kafka provides a scalable and resilient foundation while still allowing the platform to evolve over time.
+
 
