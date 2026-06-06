@@ -14,28 +14,11 @@ I assume monetization is based on API usage, marketplace integrations and transa
 
 ### Outbound Flow
 
-<img width="1269" height="787" alt="image" src="https://github.com/user-attachments/assets/6fa86543-1f75-49c9-b1f1-2ee43f473d3b" />
+<img width="1265" height="790" alt="image" src="https://github.com/user-attachments/assets/70f8d32b-0715-4f48-90c4-e16d802a4646" />
 
 ### Inbound Flow
 
-```text
-
-Amazon eBay     Zalando  Shopify
- ▼      ▼         ▼         ▼
- └──────┼─────────┴─────────┘
-        │
-        ▼
-Marketplace Connectors
-        │
-        ▼
-      Kafka
-        │
-        ▼
-   Order Service
-        │
-        ▼
-      Database
-```
+<img width="1673" height="597" alt="image" src="https://github.com/user-attachments/assets/1fd36350-8cda-4a91-8bc5-9b8391553c3f" />
 
 The platform acts as middleware between brands and marketplaces.
 
