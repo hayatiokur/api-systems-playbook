@@ -15,25 +15,57 @@ I assume monetization is based on API usage, marketplace integrations and transa
 ```text
 [MIRO DIAGRAM PLACEHOLDER]
 
+                    OUTBOUND FLOW
+
 Brand / Retailer
         │
         ▼
    API Gateway
         │
         ▼
- Backend APIs
+   Backend APIs
         │
         ▼
       Kafka
         │
- ┌──────┼──────┬─────────┐
- ▼      ▼      ▼         ▼
-Billing Analytics CRM Notifications
+
+        │
+ ┌──────┼─────────┬─────────┬─────────┐
+ ▼      ▼         ▼         ▼         ▼         
+Billing Analytics CRM Notifications Marketplace-connectors
+                                        ▼
+                                        │
+                                 ┌──────┼─────────┬─────────┐
+                                 ▼      ▼         ▼         ▼
+                               Amazon eBay     Zalando  Shopify
+
+
+
+                     INBOUND FLOW
+
+Amazon eBay     Zalando  Shopify
+ ▼      ▼         ▼         ▼
+ └──────┼─────────┴─────────┘
+        │
+        ▼
+Marketplace Connectors
+        │
+        ▼
+      Kafka
+        │
+ ┌──────┼─────────┬─────────┬─────────┐
+ ▼      ▼         ▼         ▼         ▼
+Billing Analytics CRM Notifications Order Service
+                                        │
+                                        ▼
+                                     Database
 ```
 
-The API Gateway acts as the entry point for all traffic. Backend services handle business logic while Kafka enables asynchronous processing for downstream systems.
+The platform acts as middleware between brands and marketplaces.
 
-This architecture keeps the platform modular. New services can subscribe to Kafka events without requiring changes to existing services. It also keeps APIs responsive because non critical work can be processed asynchronously.
+Outbound events such as product updates, inventory updates and price changes are sent to marketplaces.
+
+Inbound events such as new orders, shipment updates and returns are collected from marketplaces and stored in the platform.
 
 ---
 
@@ -57,11 +89,11 @@ API Gateway
 Backend Service
 ```
 
-Customers authenticate using OAuth2 and receive JWT access tokens. The gateway validates the token before routing requests.
+Customers authenticate using OAuth2 and receive JWT access tokens.
 
-JWT allows authentication to happen locally at the gateway without calling a central authentication service for every request. This reduces latency and scales well as traffic grows.
+JWT validation happens at the gateway, allowing requests to be authenticated without querying a central session store.
 
-For server to server integrations, API keys may also be supported.
+API keys may also be supported for server to server integrations.
 
 ---
 
@@ -83,17 +115,15 @@ API Gateway
 Backend Service
 ```
 
-Rate limiting protects the platform from abuse while ensuring fair usage across customers.
+Rate limiting protects the platform and supports usage based monetization.
 
-Example limits:
+Example plans:
 
 * Free: 100 req/min
 * Pro: 1000 req/min
 * Enterprise: custom
 
 The platform uses sliding window rate limiting with per account limits and global safeguards.
-
-Burst traffic is allowed within reasonable limits to avoid hurting legitimate usage patterns.
 
 ---
 
@@ -115,7 +145,7 @@ Gateway
 Monitoring Platform
 ```
 
-Logs, metrics and traces provide visibility into platform health and behavior.
+The platform collects logs, metrics and traces to understand system behavior and troubleshoot incidents.
 
 Key metrics:
 
@@ -124,9 +154,7 @@ Key metrics:
 * Throughput
 * Success Rate
 
-Typical alerts include spikes in 5xx errors, unusual latency increases and traffic anomalies.
-
-Observability is critical because it allows engineers to detect and troubleshoot issues before customers notice them.
+Alerts are configured for latency spikes, error spikes and unusual traffic patterns.
 
 ---
 
@@ -143,16 +171,54 @@ Product Updated
         ▼
        Kafka
         │
- ┌──────┼──────┬─────────┐
- ▼      ▼      ▼         ▼
-Billing Analytics CRM Notifications
+ ┌──────┼─────────┬─────────┬─────────┬─────────┐
+ ▼      ▼         ▼         ▼         ▼         ▼
+Billing Analytics CRM Notifications Marketplace Connectors
 ```
 
-Not every action needs to happen during the API request.
+The platform uses Kafka as its event backbone.
 
-When product, inventory or order data changes, events are published to Kafka. Downstream services consume these events independently.
+Business events such as ProductUpdated, InventoryChanged and OrderCreated are published to Kafka and processed independently by downstream services.
 
-This reduces coupling between services and keeps API response times low even when multiple systems need to react to the same event.
+This reduces coupling and allows services to scale independently.
+
+---
+
+## Order Delivery Options
+
+```text
+[MIRO DIAGRAM PLACEHOLDER]
+
+                   New Order
+
+Marketplace
+      │
+      ▼
+Connector
+      │
+      ▼
+ Kafka
+      │
+      ▼
+Order Service
+      │
+      ▼
+ Database
+
+      ├────────► API Pull
+      │
+      ├────────► Webhook Push
+      │
+      └────────► CSV/XML Export
+```
+
+Customers can receive order data through multiple mechanisms depending on their technical maturity and integration capabilities.
+
+Supported options:
+
+* Pull via API
+* Push via Webhooks
+* Scheduled CSV/XML exports
 
 ---
 
@@ -169,52 +235,52 @@ This reduces coupling between services and keeps API response times low even whe
                        │
                        ▼
                   Kafka Cluster
-               Broker 1 Broker 2 Broker 3
+
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+     Broker 1       Broker 2       Broker 3
 ```
 
-Multiple gateway instances run behind a load balancer so traffic can be distributed across the platform.
+Multiple gateway instances run behind a load balancer.
 
-Kafka brokers replicate data across the cluster. If a broker fails, another broker can take over and continue serving traffic.
+Kafka brokers replicate data across the cluster and consumer groups allow horizontal scaling.
 
-Consumer groups allow event processing to scale horizontally as usage grows.
-
-This architecture removes major single points of failure and provides a foundation for high availability.
+If a gateway instance, service or broker fails, the platform continues operating with minimal disruption.
 
 ---
 
 ## Tradeoffs
 
-Every architectural decision introduces tradeoffs.
+### API Gateway
 
-API Gateway:
-
-* * Centralized routing, auth and monitoring
+* * Centralized authentication, routing and monitoring
 * * Additional infrastructure and latency
 
-JWT:
+### JWT
 
-* * Scalable and stateless
+* * Stateless and scalable
 * * Token revocation is harder
 
-Kafka:
+### Kafka
 
 * * Scalability, resilience and loose coupling
-* * Operational complexity
+* * Higher operational complexity
 
-Rate Limiting:
+### Rate Limiting
 
 * * Infrastructure protection and monetization
-* * Poorly configured limits can hurt user experience
+* * Aggressive limits may hurt user experience
 
-The overall tradeoff is accepting additional system complexity in exchange for scalability, resilience and operational flexibility.
+### Event Driven Architecture
+
+* * Highly scalable and resilient
+* * Eventual consistency between systems
 
 ---
 
 ## Conclusion
 
-This architecture provides a scalable platform for connecting brands and marketplaces through a single integration layer.
+This architecture provides a scalable marketplace integration platform where brands integrate once and communicate with many marketplaces.
 
-The combination of API Gateway, OAuth2, JWT, rate limiting, observability and Kafka creates a platform that can grow with customer demand while remaining reliable and manageable.
-
-The biggest challenge is operational complexity, but for a platform handling large volumes of product, inventory and order data, the benefits outweigh the costs.
+The combination of API Gateway, OAuth2, JWT, rate limiting, observability and Kafka creates a resilient platform that can process large volumes of product, inventory and order data while remaining flexible and extensible.
 
