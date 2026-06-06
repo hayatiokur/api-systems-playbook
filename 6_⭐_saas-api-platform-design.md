@@ -32,7 +32,7 @@ Brand / Retailer
 Transformation / Enrichment
         │
         ▼
-  Product Catalog
+ Product Catalog DB
         │
         ▼
   Export Service
@@ -74,11 +74,11 @@ Marketplace Connectors
 
 The platform acts as middleware between brands and marketplaces.
 
-Brands send product, inventory, price and image data to the platform. The platform transforms and enriches this data before distributing it to marketplaces.
+Brands send product, inventory, pricing and image data to the platform. The platform validates, transforms and enriches this data before distributing it to different marketplaces.
 
-On the other side, marketplaces send orders, returns and shipment updates back to the platform.
+Marketplaces also send data back, such as new orders, shipment updates and returns.
 
-I chose an event driven architecture because marketplace integrations are usually slow, unreliable and high volume. Kafka helps decouple the different parts of the system and makes scaling much easier.
+I chose an event driven architecture because marketplace integrations are usually slow, unreliable and high volume. Kafka helps decouple different parts of the system and makes scaling easier.
 
 ---
 
@@ -104,7 +104,7 @@ Data Import API
 
 Customers authenticate using OAuth2 and receive JWT access tokens.
 
-JWT is a good fit here because authentication can happen directly at the gateway. No need to query another service for every request.
+JWT is a good fit because authentication can happen directly at the API Gateway without calling another service for every request.
 
 For simpler integrations, API keys can also be supported.
 
@@ -167,7 +167,7 @@ The most important metrics would be:
 * Throughput
 * Success Rate
 
-Alerts should be configured for things like latency spikes, increased error rates and unusual traffic patterns.
+Alerts should be configured for latency spikes, increased error rates and unusual traffic patterns.
 
 ---
 
@@ -188,14 +188,14 @@ Product Updated
 Transformation Service
         │
         ▼
- Product Catalog
+ Product Catalog DB
 ```
 
 Almost everything in the platform is event driven.
 
 When product, inventory or pricing data arrives, an event is published to Kafka. Transformation and enrichment services consume these events and build a clean internal product catalog.
 
-This allows ingestion and processing to scale independently.
+Invalid data should not enter the catalog. Validation errors should be logged and exposed to customers so they can fix data quality issues.
 
 ---
 
@@ -204,7 +204,7 @@ This allows ingestion and processing to scale independently.
 ```text
 [MIRO DIAGRAM PLACEHOLDER]
 
- Product Catalog
+ Product Catalog DB
         │
         ▼
   Export Service
@@ -217,15 +217,37 @@ This allows ingestion and processing to scale independently.
 Amazon eBay     Zalando  Shopify Analytics
 ```
 
-I intentionally use Kafka again before marketplace connectors.
+The platform uses Kafka again before marketplace connectors.
 
-There are several reasons for this.
+Different marketplaces process data at different speeds and sometimes become unavailable.
 
-First, exporting is usually slow. Different marketplaces have different APIs, rate limits and reliability. Kafka allows connectors to process data at their own speed.
+Kafka allows connectors to consume data independently, retry failed exports and scale separately from the rest of the platform.
 
-Second, retries become much easier. If Amazon is temporarily unavailable, events stay in Kafka and can be retried later.
+A single export event can also be consumed by multiple systems without creating tight dependencies.
 
-Third, a single event can be consumed by many systems. The same export event can be used by Amazon, eBay, Shopify, analytics or audit services without creating direct dependencies.
+---
+
+## Failed Exports
+
+```text
+[MIRO DIAGRAM PLACEHOLDER]
+
+Marketplace Connector
+          │
+          ▼
+      Amazon
+
+       Failure
+          │
+          ▼
+         DLQ
+```
+
+Marketplace APIs fail sometimes.
+
+Instead of losing data, failed exports are sent to a Dead Letter Queue (DLQ) for investigation and retry.
+
+This improves reliability and prevents data loss.
 
 ---
 
@@ -310,7 +332,7 @@ Consumer groups allow processing capacity to grow as traffic grows.
 
 ### Kafka
 
-* * Scalability, resilience and loose coupling
+* * Scalable, resilient and loosely coupled
 * * More operational complexity
 
 ### Rate Limiting
@@ -332,4 +354,3 @@ I think this architecture is a good fit for a marketplace integration platform.
 Brands integrate once and can communicate with many marketplaces through a single platform.
 
 The combination of API Gateway, OAuth2, JWT, rate limiting, observability and Kafka provides a scalable and resilient foundation while still allowing the platform to evolve over time.
-
