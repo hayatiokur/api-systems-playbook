@@ -86,3 +86,48 @@ Log File / Metrics / Errors
 ```
 * Integration with monitoring tools
 * Historical trend analysis
+
+## Next versions
+
+V2
+
+Support:
+
+Apache
+Nginx
+Kong
+AWS API Gateway
+
+log formats.
+
+V3
+
+Generate:
+
+Incident Report
+
+automatically.
+
+V4
+
+Add observability metrics.
+
+Upload:
+
+logs
+metrics
+traces
+
+and correlate them.
+
+V5
+
+Chat with API documentation.
+
+Upload:
+
+OpenAPI spec
+
+and ask:
+
+Why am I getting 403 from this endpoint?
