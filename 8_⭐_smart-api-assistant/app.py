@@ -38,7 +38,7 @@ if uploaded_file:
         """
 
         response = client.responses.create(
-            model="gpt-5",
+            model="gpt-4.1",
             input=prompt
         )
 
