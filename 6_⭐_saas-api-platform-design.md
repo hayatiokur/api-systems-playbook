@@ -38,7 +38,8 @@ Billing Analytics CRM Notifications Marketplace-connectors
                                  ┌──────┼─────────┬─────────┐
                                  ▼      ▼         ▼         ▼
                                Amazon eBay     Zalando  Shopify
-
+```
+```text
 
 
                      INBOUND FLOW
