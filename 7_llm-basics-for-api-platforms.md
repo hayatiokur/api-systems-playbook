@@ -29,7 +29,6 @@ Max output tokens limits the size of AI response.
 AI can analyze logs, metrics, traces and API usage data. So it is really helpful to detect anomalies and troubleshoot issues faster.
 
 It can also improve developer experience by explaining errors, generating API examples, assisting with documentation and answering developer questions.
-  }'
   
 ## Example API Call
 
@@ -39,5 +38,5 @@ curl https://api.openai.com/v1/responses \
   -H "Authorization: Bearer YOUR_API_KEY_HERE" \
   -d '{
     "model": "gpt-5",
-    "input": "Analyze this API error log and provide root cause, severity and recommendation: HTTP 429 Too Many Requests"
+    "input": "Analyze this API error log and provide root cause, severity and recommendation: HTTP 429 Too Many Requests"  }'
 ```
