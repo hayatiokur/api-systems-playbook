@@ -26,6 +26,13 @@ Cost depends mainly on:
 
 Larger models and longer prompts usually cost more.
 
+## Model Parameters
+
+Some common parameters are Temperature & Max output tokens. 
+
+Temperature controls how creative or deterministic the response is. Lower values are usually better for business applications.
+Max output tokens limits the size of AI response. 
+
 ## Example API Call
 
 ```bash
