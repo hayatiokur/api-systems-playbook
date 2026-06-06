@@ -41,15 +41,13 @@ Customers authenticate using OAuth2 and receive JWT access tokens. The API Gatew
 
 ### Rate Limiting
 
-Rate limiting protects the platform from abuse and also supports monetization.
+Rate limiting protects the platform from abuse and also supports monetization. I would use sliding window rate limiting because it creates smoother traffic patterns and avoids spikes around window boundaries. I would split clients into different buckets (depending on the account size) and assign different rate limits. 
 
 Example plans:
 
-* Free: 100 req/min
+* Basic: 100 req/min
 * Pro: 1000 req/min
 * Enterprise: custom
-
-I would use sliding window rate limiting because it creates smoother traffic patterns and avoids spikes around window boundaries.
 
 ---
 
@@ -115,35 +113,6 @@ This allows both modern and legacy systems to integrate with the platform.
 Multiple API Gateway instances run behind a load balancer.
 
 Kafka data is replicated across multiple brokers, so a single broker failure should not bring the platform down. 
-
----
-
-## Tradeoffs
-
-### API Gateway
-
-* Centralized authentication, routing and monitoring
-* Additional infrastructure and latency
-
-### JWT
-
-* Stateless and scalable
-* Token revocation is harder
-
-### Kafka
-
-* Scalable, resilient and loosely coupled
-* More operational complexity
-
-### Rate Limiting
-
-* Protects infrastructure and supports monetization
-* Can hurt user experience if limits are too aggressive
-
-### Event Driven Architecture
-
-* Highly scalable and flexible
-* Eventual consistency between systems
 
 ---
 
