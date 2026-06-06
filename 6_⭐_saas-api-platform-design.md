@@ -111,22 +111,7 @@ This allows both modern and legacy systems to integrate with the platform.
 
 ## Scalability and Resilience
 
-```text
-[MIRO DIAGRAM PLACEHOLDER]
-
-                Load Balancer
-                       │
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-    Gateway 1      Gateway 2      Gateway 3
-                       │
-                       ▼
-                  Kafka Cluster
-
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-     Broker 1       Broker 2       Broker 3
-```
+<img width="521" height="853" alt="image" src="https://github.com/user-attachments/assets/3414a238-938e-4eab-af92-1df2a6b0bdda" />
 
 Multiple API Gateway instances run behind a load balancer.
 
