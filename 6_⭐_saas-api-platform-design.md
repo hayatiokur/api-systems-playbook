@@ -30,7 +30,9 @@ I chose an event driven architecture because marketplace integrations are usuall
 
 ---
 
-<img width="604" height="1655" alt="image" src="https://github.com/user-attachments/assets/c8821d07-9579-43fe-be4d-fd0487b330f2" />
+## Authentication & Rate Limiting
+
+<img width="201" height="552" alt="image" src="https://github.com/user-attachments/assets/c8821d07-9579-43fe-be4d-fd0487b330f2" />
 
 ---
 
@@ -54,7 +56,7 @@ I would use sliding window rate limiting because it creates smoother traffic pat
 
 ---
 
-### Observability
+## Observability
 
 Logs, metrics and traces help engineers understand what is happening inside the platform.
 
@@ -69,7 +71,7 @@ Alerts should be configured for latency spikes, increased error rates and unusua
 
 ---
 
-### Async Processing
+## Async Processing
 
 Almost everything in the platform is event driven.
 
@@ -79,7 +81,7 @@ Invalid data should not enter the catalog. Validation errors should be logged an
 
 ---
 
-### Export Processing
+##5 Export Processing
 
 The platform uses Kafka again before marketplace connectors.
 
@@ -91,7 +93,7 @@ A single export event can also be consumed by multiple systems without creating 
 
 ---
 
-### Failed Exports (DQL)
+## Failed Exports (DQL)
 
 Marketplace APIs fail sometimes.
 
@@ -101,7 +103,7 @@ This improves reliability and prevents data loss.
 
 ---
 
-### Order Delivery Options
+## Order Delivery Options
 
 Different customers have different technical capabilities, so I would support multiple ways of receiving order data.
 
@@ -115,7 +117,7 @@ This allows both modern and legacy systems to integrate with the platform.
 
 ---
 
-### Scalability and Resilience
+## Scalability and Resilience
 
 ```text
 [MIRO DIAGRAM PLACEHOLDER]
