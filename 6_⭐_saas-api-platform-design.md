@@ -258,28 +258,23 @@ Consumer groups allow processing capacity to grow as platform traffic grows.
 
 ### API Gateway
 
-* * Centralized routing, authentication and monitoring
-* * Additional infrastructure and latency
-
-### JWT
-
-* * Stateless and scalable
-* * Token revocation is harder
+* Centralized routing, authentication and monitoring
+* Additional infrastructure, complexity and latency
 
 ### Kafka
 
-* * Scalable, resilient and loosely coupled
-* * More operational complexity
+* Scalable, resilient and loosely coupled
+* More operational complexity
 
 ### Rate Limiting
 
-* * Protects infrastructure and supports monetization
-* * Can hurt user experience if limits are too aggressive
+* Protects infrastructure and supports monetization
+* Can hurt user experience if limits are too aggressive - you might need to implement exceptions in the end
 
 ### Event Driven Architecture
 
-* * Highly scalable and flexible
-* * Eventual consistency between systems
+* Highly scalable and flexible
+* Eventual consistency between systems
 
 ---
 
