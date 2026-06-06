@@ -9,38 +9,128 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 st.title("Smart API Assistant")
 
-uploaded_file = st.file_uploader(
-    "Upload log file",
+log_type = st.selectbox(
+    "Log Format",
+    [
+        "Auto Detect",
+        "Apache",
+        "Nginx",
+        "Kong",
+        "AWS API Gateway"
+    ]
+)
+
+log_file = st.file_uploader(
+    "Upload Logs",
     type=["txt", "log"]
 )
 
-if uploaded_file:
-    log_content = uploaded_file.read().decode("utf-8")
+metrics_file = st.file_uploader(
+    "Upload Metrics",
+    type=["csv", "txt"]
+)
 
-    st.subheader("Uploaded Log")
-    st.text_area("", log_content, height=200)
+trace_file = st.file_uploader(
+    "Upload Traces",
+    type=["json", "txt"]
+)
 
-    if st.button("Analyze"):
+if st.button("Analyze"):
 
-        prompt = f"""
-        You are an API operations assistant.
+    logs = ""
+    metrics = ""
+    traces = ""
 
-        Analyze the following logs and provide:
+    if log_file:
+        logs = log_file.read().decode("utf-8")
 
-        1. Severity
-        2. Likely Root Cause
-        3. Affected Services or Endpoints
-        4. Recommended Actions
+    if metrics_file:
+        metrics = metrics_file.read().decode("utf-8")
 
-        Logs:
+    if trace_file:
+        traces = trace_file.read().decode("utf-8")
 
-        {log_content}
-        """
+    prompt = f"""
+You are a senior API platform engineer and observability expert.
 
-        response = client.responses.create(
-            model="gpt-4.1",
-            input=prompt
-        )
+Supported log platforms:
+- Apache
+- Nginx
+- Kong
+- AWS API Gateway
 
-        st.subheader("Analysis")
-        st.write(response.output_text)
+Selected Log Source:
+{log_type}
+
+Analyze all available data sources.
+
+=== LOGS ===
+{logs}
+
+=== METRICS ===
+{metrics}
+
+=== TRACES ===
+{traces}
+
+Generate a complete Incident Report.
+
+Structure:
+
+# Executive Summary
+
+Short summary of the incident.
+
+# Severity
+
+Low / Medium / High / Critical
+
+# Root Cause
+
+Most likely root cause.
+
+# Impact Assessment
+
+What users or systems were affected?
+
+# Affected Services or Endpoints
+
+List affected services.
+
+# Evidence
+
+Correlate logs, metrics and traces.
+
+Explain why you reached the conclusion.
+
+# Recommended Actions
+
+Immediate actions.
+
+# Next Steps
+
+Longer term improvements.
+
+# Platform Detection
+
+If Auto Detect is selected, determine the most likely platform from log patterns.
+
+Be concise and practical.
+"""
+
+    response = client.responses.create(
+        model="gpt-4.1",
+        input=prompt
+    )
+
+    report = response.output_text
+
+    st.subheader("Incident Report")
+    st.markdown(report)
+
+    st.download_button(
+        label="Download Incident Report",
+        data=report,
+        file_name="incident_report.md",
+        mime="text/markdown"
+    )
