@@ -23,15 +23,25 @@ Brand / Retailer
    API Gateway
         │
         ▼
-   Backend APIs
+ Data Import API
         │
         ▼
       Kafka
         │
-
+        ▼
+Transformation / Enrichment
+        │
+        ▼
+  Product Catalog
+        │
+        ▼
+  Export Service
+        │
+        ▼
+      Kafka
         │
  ┌──────┼─────────┬─────────┬─────────┐
- ▼      ▼         ▼         ▼         ▼         
+ ▼      ▼         ▼         ▼         ▼
 Billing Analytics CRM Notifications Marketplace-connectors
                                         ▼
                                         │
@@ -41,6 +51,7 @@ Billing Analytics CRM Notifications Marketplace-connectors
 ```
 
 ```text
+[MIRO DIAGRAM PLACEHOLDER]
 
                      INBOUND FLOW
 
@@ -54,21 +65,20 @@ Marketplace Connectors
         ▼
       Kafka
         │
- ┌──────┼─────────┬─────────┬─────────┐
- ▼      ▼         ▼         ▼         ▼
-Billing Analytics CRM Notifications Order Service
-                                        │
-                                        ▼
-                                     Database
+        ▼
+   Order Service
+        │
+        ▼
+      Database
 ```
 
 The platform acts as middleware between brands and marketplaces.
 
-For outbound traffic, brands send product, inventory, pricing and image data to the platform. The platform then distributes this data to one or more marketplaces.
+Brands send product, inventory, price and image data to the platform. The platform transforms and enriches this data before distributing it to marketplaces.
 
-For inbound traffic, marketplaces send order, shipment and return information back to the platform. This data is stored and later made available to customers.
+On the other side, marketplaces send orders, returns and shipment updates back to the platform.
 
-The platform is designed around Kafka. Almost everything becomes an event, which makes the system easier to scale and extend over time.
+I chose an event driven architecture because marketplace integrations are usually slow, unreliable and high volume. Kafka helps decouple the different parts of the system and makes scaling much easier.
 
 ---
 
@@ -89,12 +99,12 @@ Access Token (JWT)
 API Gateway
   │
   ▼
-Backend Service
+Data Import API
 ```
 
 Customers authenticate using OAuth2 and receive JWT access tokens.
 
-I chose JWT because the API Gateway can validate tokens directly without calling another service on every request. This keeps authentication fast and scalable.
+JWT is a good fit here because authentication can happen directly at the gateway. No need to query another service for every request.
 
 For simpler integrations, API keys can also be supported.
 
@@ -115,7 +125,7 @@ API Gateway
   └─ Routing
   │
   ▼
-Backend Service
+Data Import API
 ```
 
 Rate limiting protects the platform from abuse and also supports monetization.
@@ -126,7 +136,7 @@ Example plans:
 * Pro: 1000 req/min
 * Enterprise: custom
 
-I would use sliding window rate limiting because it creates smoother traffic patterns and avoids traffic spikes around window boundaries.
+I would use sliding window rate limiting because it creates smoother traffic patterns and avoids spikes around window boundaries.
 
 ---
 
@@ -150,7 +160,7 @@ Monitoring Platform
 
 Logs, metrics and traces help engineers understand what is happening inside the platform.
 
-The most important metrics would probably be:
+The most important metrics would be:
 
 * Latency
 * Error Rate
@@ -169,21 +179,53 @@ Alerts should be configured for things like latency spikes, increased error rate
 Product Updated
         │
         ▼
-    API Service
+ Data Import API
         │
         ▼
        Kafka
         │
- ┌──────┼─────────┬─────────┬─────────┬─────────┐
- ▼      ▼         ▼         ▼         ▼         ▼
-Billing Analytics CRM Notifications Marketplace Connectors
+        ▼
+Transformation Service
+        │
+        ▼
+ Product Catalog
 ```
 
-Kafka is the backbone of the platform.
+Almost everything in the platform is event driven.
 
-When something happens, for example a product update, inventory update or new order, an event is published to Kafka.
+When product, inventory or pricing data arrives, an event is published to Kafka. Transformation and enrichment services consume these events and build a clean internal product catalog.
 
-Different systems can then react independently. Marketplace connectors, analytics, billing and notification services can all process the same event without being directly connected to each other.
+This allows ingestion and processing to scale independently.
+
+---
+
+## Export Processing
+
+```text
+[MIRO DIAGRAM PLACEHOLDER]
+
+ Product Catalog
+        │
+        ▼
+  Export Service
+        │
+        ▼
+      Kafka
+        │
+ ┌──────┼─────────┬─────────┬─────────┐
+ ▼      ▼         ▼         ▼         ▼
+Amazon eBay     Zalando  Shopify Analytics
+```
+
+I intentionally use Kafka again before marketplace connectors.
+
+There are several reasons for this.
+
+First, exporting is usually slow. Different marketplaces have different APIs, rate limits and reliability. Kafka allows connectors to process data at their own speed.
+
+Second, retries become much easier. If Amazon is temporarily unavailable, events stay in Kafka and can be retried later.
+
+Third, a single event can be consumed by many systems. The same export event can be used by Amazon, eBay, Shopify, analytics or audit services without creating direct dependencies.
 
 ---
 
@@ -250,7 +292,7 @@ Multiple API Gateway instances run behind a load balancer.
 
 Kafka data is replicated across multiple brokers, so a single broker failure should not bring the platform down.
 
-Consumer groups allow processing capacity to grow as platform traffic grows.
+Consumer groups allow processing capacity to grow as traffic grows.
 
 ---
 
@@ -258,23 +300,28 @@ Consumer groups allow processing capacity to grow as platform traffic grows.
 
 ### API Gateway
 
-* Centralized routing, authentication and monitoring
-* Additional infrastructure, complexity and latency
+* * Centralized authentication, routing and monitoring
+* * Additional infrastructure and latency
+
+### JWT
+
+* * Stateless and scalable
+* * Token revocation is harder
 
 ### Kafka
 
-* Scalable, resilient and loosely coupled
-* More operational complexity
+* * Scalability, resilience and loose coupling
+* * More operational complexity
 
 ### Rate Limiting
 
-* Protects infrastructure and supports monetization
-* Can hurt user experience if limits are too aggressive - you might need to implement exceptions in the end
+* * Protects infrastructure and supports monetization
+* * Can hurt user experience if limits are too aggressive
 
 ### Event Driven Architecture
 
-* Highly scalable and flexible
-* Eventual consistency between systems
+* * Highly scalable and flexible
+* * Eventual consistency between systems
 
 ---
 
@@ -285,5 +332,4 @@ I think this architecture is a good fit for a marketplace integration platform.
 Brands integrate once and can communicate with many marketplaces through a single platform.
 
 The combination of API Gateway, OAuth2, JWT, rate limiting, observability and Kafka provides a scalable and resilient foundation while still allowing the platform to evolve over time.
-
 
