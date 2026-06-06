@@ -10,27 +10,18 @@ Models process text as tokens rather than words. Cost is usually based on input 
 
 ## Structured Outputs
 
-Instead of free text, models can return structured data such as JSON.
-
-This is useful when building applications because the output becomes predictable and easier to process.
+Instead of free text, models can return structured data such as JSON. This is useful when building applications because the output becomes predictable and easier to process.
 
 ## Context Window and Cost
 
-Models can only process a limited amount of text at once. The prompt, conversation history and response all count towards this limit.
-
-Cost depends mainly on:
-
-* Model choice
-* Input size
-* Output size
-
-Larger models and longer prompts usually cost more.
+Models can only process a limited amount of text at once. The prompt, conversation history and response all count towards this limit. Cost depends mainly on model choice and input/output size. Larger models and longer prompts usually cost more.
 
 ## Model Parameters
 
 Some common parameters are Temperature & Max output tokens. 
 
 Temperature controls how creative or deterministic the response is. Lower values are usually better for business applications.
+
 Max output tokens limits the size of AI response. 
 
 ## Example API Call
