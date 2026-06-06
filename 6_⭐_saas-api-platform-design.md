@@ -56,7 +56,7 @@ I would use sliding window rate limiting because it creates smoother traffic pat
 
 ## Further details
 
-## Observability
+### Observability
 
 Logs, metrics and traces help engineers understand what is happening inside the platform.
 
@@ -69,7 +69,7 @@ The most important metrics would be:
 
 Alerts should be configured for latency spikes, increased error rates and unusual traffic patterns.
 
-## Async Processing
+### Async Processing
 
 Almost everything in the platform is event driven.
 
@@ -77,7 +77,7 @@ When product, inventory or pricing data arrives, an event is published to Kafka.
 
 Invalid data should not enter the catalog. Validation errors should be logged and exposed to customers so they can fix data quality issues.
 
-## Export Processing
+### Export Processing
 
 The platform uses Kafka again before marketplace connectors.
 
@@ -87,7 +87,7 @@ Kafka allows connectors to consume data independently, retry failed exports and 
 
 A single export event can also be consumed by multiple systems without creating tight dependencies.
 
-## Failed Exports (DQL)
+### Failed Exports (DQL)
 
 Marketplace APIs fail sometimes.
 
@@ -95,7 +95,7 @@ Instead of losing data, failed exports are sent to a Dead Letter Queue (DLQ) for
 
 This improves reliability and prevents data loss.
 
-## Order Delivery Options
+### Order Delivery Options
 
 Different customers have different technical capabilities, so I would support multiple ways of receiving order data.
 
