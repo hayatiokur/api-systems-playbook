@@ -37,8 +37,7 @@ I chose an event driven architecture because marketplace integrations are usuall
 
 ### Authentication
 
-Customers authenticate using OAuth2 and receive JWT access tokens on API gateway. And Rauting happens only after successful authentication (and rate limiting after - see below). 
-
+Customers authenticate using OAuth2 and receive JWT access tokens. The API Gateway validates the token before applying rate limiting and routing the request. Authentication happens before rate limiting so limits can be applied per customer rather than per IP.
 
 ### Rate Limiting
 
@@ -54,7 +53,7 @@ I would use sliding window rate limiting because it creates smoother traffic pat
 
 ---
 
-## Further details
+## Key Design Decisions
 
 ### Observability
 
@@ -87,7 +86,7 @@ Kafka allows connectors to consume data independently, retry failed exports and 
 
 A single export event can also be consumed by multiple systems without creating tight dependencies.
 
-### Failed Exports (DQL)
+### Failed Exports (DLQ)
 
 Marketplace APIs fail sometimes.
 
@@ -115,7 +114,7 @@ This allows both modern and legacy systems to integrate with the platform.
 
 Multiple API Gateway instances run behind a load balancer.
 
-Kafka data is replicated across multiple brokers, so a single broker failure should not bring the platform down.
+Kafka data is replicated across multiple brokers, so a single broker failure should not bring the platform down. 
 
 ---
 
