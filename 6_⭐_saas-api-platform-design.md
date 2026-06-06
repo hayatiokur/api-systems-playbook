@@ -34,13 +34,11 @@ I chose an event driven architecture because marketplace integrations are usuall
 
 <img width="201" height="552" alt="image" src="https://github.com/user-attachments/assets/c8821d07-9579-43fe-be4d-fd0487b330f2" />
 
----
 
 ### Authentication
 
 Customers authenticate using OAuth2 and receive JWT access tokens on API gateway. And Rauting happens only after successful authentication (and rate limiting after - see below). 
 
----
 
 ### Rate Limiting
 
@@ -56,6 +54,8 @@ I would use sliding window rate limiting because it creates smoother traffic pat
 
 ---
 
+## Further details
+
 ## Observability
 
 Logs, metrics and traces help engineers understand what is happening inside the platform.
@@ -69,8 +69,6 @@ The most important metrics would be:
 
 Alerts should be configured for latency spikes, increased error rates and unusual traffic patterns.
 
----
-
 ## Async Processing
 
 Almost everything in the platform is event driven.
@@ -79,9 +77,7 @@ When product, inventory or pricing data arrives, an event is published to Kafka.
 
 Invalid data should not enter the catalog. Validation errors should be logged and exposed to customers so they can fix data quality issues.
 
----
-
-##5 Export Processing
+## Export Processing
 
 The platform uses Kafka again before marketplace connectors.
 
@@ -91,8 +87,6 @@ Kafka allows connectors to consume data independently, retry failed exports and 
 
 A single export event can also be consumed by multiple systems without creating tight dependencies.
 
----
-
 ## Failed Exports (DQL)
 
 Marketplace APIs fail sometimes.
@@ -100,8 +94,6 @@ Marketplace APIs fail sometimes.
 Instead of losing data, failed exports are sent to a Dead Letter Queue (DLQ) for investigation and retry.
 
 This improves reliability and prevents data loss.
-
----
 
 ## Order Delivery Options
 
@@ -140,36 +132,34 @@ Multiple API Gateway instances run behind a load balancer.
 
 Kafka data is replicated across multiple brokers, so a single broker failure should not bring the platform down.
 
-Consumer groups allow processing capacity to grow as traffic grows.
-
 ---
 
 ## Tradeoffs
 
 ### API Gateway
 
-* * Centralized authentication, routing and monitoring
-* * Additional infrastructure and latency
+* Centralized authentication, routing and monitoring
+* Additional infrastructure and latency
 
 ### JWT
 
-* * Stateless and scalable
-* * Token revocation is harder
+* Stateless and scalable
+* Token revocation is harder
 
 ### Kafka
 
-* * Scalable, resilient and loosely coupled
-* * More operational complexity
+* Scalable, resilient and loosely coupled
+* More operational complexity
 
 ### Rate Limiting
 
-* * Protects infrastructure and supports monetization
-* * Can hurt user experience if limits are too aggressive
+* Protects infrastructure and supports monetization
+* Can hurt user experience if limits are too aggressive
 
 ### Event Driven Architecture
 
-* * Highly scalable and flexible
-* * Eventual consistency between systems
+* Highly scalable and flexible
+* Eventual consistency between systems
 
 ---
 
