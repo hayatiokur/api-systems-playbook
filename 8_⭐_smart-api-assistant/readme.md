@@ -41,6 +41,7 @@ Recommended Actions:
 2. Roll back if necessary
 3. Monitor error rate
 ```
+
 ## Example 2
 
 ```text
@@ -50,6 +51,7 @@ Metrics
 +
 Recent Deployments
 ```
+
 Output:
 
 ```text
@@ -66,4 +68,10 @@ Recommended Actions:
 1. Increase pool size
 2. Roll back deployment
 3. Monitor recovery
+```
+
+## Architecture
+
+```text
+Logs / Metrics / Errors --> OpenAI API -->  Incident Analysis
 ```
