@@ -10,11 +10,12 @@ Large API platforms generate huge amounts of operational data, making it difficu
 
 Smart API Assistant is an AI powered tool that analyzes logs, metrics and API errors to help engineers troubleshoot incidents faster.
 
-The assistant provides:
+The assistant can:
 
-* Root Cause
-* Severity
-* Recommended Actions
+* Analyze log files
+* Analyze API errors
+* Identify likely root causes
+* Suggest recommended actions
 
 ## Example 1
 
@@ -43,6 +44,8 @@ Recommended Actions:
 ```
 
 ## Example 2
+
+Input:
 
 ```text
 API Logs
@@ -73,5 +76,13 @@ Recommended Actions:
 ## Architecture
 
 ```text
-Logs / Metrics / Errors --> OpenAI API -->  Incident Analysis
+Log File / Metrics / Errors
+            │
+            ▼
+       OpenAI API
+            │
+            ▼
+   Incident Analysis
 ```
+* Integration with monitoring tools
+* Historical trend analysis
