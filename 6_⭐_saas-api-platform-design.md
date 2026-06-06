@@ -12,17 +12,13 @@ I assume monetization is based on API usage, marketplace integrations and transa
 
 ## High Level Architecture
 
+### Outbound Flow
+
+<img width="1269" height="787" alt="image" src="https://github.com/user-attachments/assets/6fa86543-1f75-49c9-b1f1-2ee43f473d3b" />
+
+### Inbound Flow
+
 ```text
-
-                    OUTBOUND FLOW
-```
-<img width="1275" height="783" alt="image" src="https://github.com/user-attachments/assets/ca236504-44e6-43c1-9f2c-3bcb637ad250" />
-
-
-```text
-[MIRO DIAGRAM PLACEHOLDER]
-
-                     INBOUND FLOW
 
 Amazon eBay     Zalando  Shopify
  ▼      ▼         ▼         ▼
