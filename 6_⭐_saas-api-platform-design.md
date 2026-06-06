@@ -47,7 +47,7 @@ Access Token (JWT)
 API Gateway
   │
   ▼
-Data Import API
+Data Import APIs
 ```
 
 Customers authenticate using OAuth2 and receive JWT access tokens.
@@ -73,7 +73,7 @@ API Gateway
   └─ Routing
   │
   ▼
-Data Import API
+Data Import APIs
 ```
 
 Rate limiting protects the platform from abuse and also supports monetization.
@@ -90,22 +90,6 @@ I would use sliding window rate limiting because it creates smoother traffic pat
 
 ## Observability
 
-```text
-[MIRO DIAGRAM PLACEHOLDER]
-
-Request
-  │
-  ▼
-Gateway
-  │
-  ├─ Logs
-  ├─ Metrics
-  └─ Traces
-  │
-  ▼
-Monitoring Platform
-```
-
 Logs, metrics and traces help engineers understand what is happening inside the platform.
 
 The most important metrics would be:
@@ -121,24 +105,6 @@ Alerts should be configured for latency spikes, increased error rates and unusua
 
 ## Async Processing
 
-```text
-[MIRO DIAGRAM PLACEHOLDER]
-
-Product Updated
-        │
-        ▼
- Data Import API
-        │
-        ▼
-       Kafka
-        │
-        ▼
-Transformation Service
-        │
-        ▼
- Product Catalog DB
-```
-
 Almost everything in the platform is event driven.
 
 When product, inventory or pricing data arrives, an event is published to Kafka. Transformation and enrichment services consume these events and build a clean internal product catalog.
@@ -148,22 +114,6 @@ Invalid data should not enter the catalog. Validation errors should be logged an
 ---
 
 ## Export Processing
-
-```text
-[MIRO DIAGRAM PLACEHOLDER]
-
- Product Catalog DB
-        │
-        ▼
-  Export Service
-        │
-        ▼
-      Kafka
-        │
- ┌──────┼─────────┬─────────┬─────────┐
- ▼      ▼         ▼         ▼         ▼
-Amazon eBay     Zalando  Shopify Analytics
-```
 
 The platform uses Kafka again before marketplace connectors.
 
@@ -175,21 +125,7 @@ A single export event can also be consumed by multiple systems without creating 
 
 ---
 
-## Failed Exports
-
-```text
-[MIRO DIAGRAM PLACEHOLDER]
-
-Marketplace Connector
-          │
-          ▼
-      Amazon
-
-       Failure
-          │
-          ▼
-         DLQ
-```
+## Failed Exports (DQL)
 
 Marketplace APIs fail sometimes.
 
@@ -200,32 +136,6 @@ This improves reliability and prevents data loss.
 ---
 
 ## Order Delivery Options
-
-```text
-[MIRO DIAGRAM PLACEHOLDER]
-
-                   New Order
-
-Marketplace
-      │
-      ▼
-Connector
-      │
-      ▼
- Kafka
-      │
-      ▼
-Order Service
-      │
-      ▼
- Database
-
-      ├────────► API Pull
-      │
-      ├────────► Webhook Push
-      │
-      └────────► CSV/XML Export
-```
 
 Different customers have different technical capabilities, so I would support multiple ways of receiving order data.
 
