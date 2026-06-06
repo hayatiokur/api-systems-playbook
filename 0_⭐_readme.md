@@ -24,4 +24,6 @@ This is the document that brings together all concepts covered in this repositor
 
 ### 2- Smart API assistant
 
+Check out the AI tool I created!
+
 👉 **[9_⭐_smart-api-assistant](https://github.com/hayatiokur/api-systems-playbook/blob/main/9_⭐_smart-api-assistant.md)**
