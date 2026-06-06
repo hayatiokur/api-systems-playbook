@@ -40,8 +40,14 @@ Cost depends on:
 
 ## Example Use Case
 
-Analyze API logs and return:
+Analyze API logs and return root cause, severity & recommended fix.
 
-* Root Cause
-* Severity
-* Recommended Fix
+```bash
+curl https://api.openai.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY_HERE" \
+  -d '{
+    "model": "gpt-5",
+    "input": "Analyze this API error log and provide root cause, severity and recommendation: HTTP 429 Too Many Requests"
+  }'
+```
