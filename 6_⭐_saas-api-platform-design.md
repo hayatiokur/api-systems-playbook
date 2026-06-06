@@ -13,42 +13,11 @@ I assume monetization is based on API usage, marketplace integrations and transa
 ## High Level Architecture
 
 ```text
-[MIRO DIAGRAM PLACEHOLDER]
 
                     OUTBOUND FLOW
-
-Brand / Retailer
-        │
-        ▼
-   API Gateway
-        │
-        ▼
- Data Import API
-        │
-        ▼
-      Kafka
-        │
-        ▼
-Transformation / Enrichment
-        │
-        ▼
- Product Catalog DB
-        │
-        ▼
-  Export Service
-        │
-        ▼
-      Kafka
-        │
- ┌──────┼─────────┬─────────┬─────────┐
- ▼      ▼         ▼         ▼         ▼
-Billing Analytics CRM Notifications Marketplace-connectors
-                                        ▼
-                                        │
-                                 ┌──────┼─────────┬─────────┐
-                                 ▼      ▼         ▼         ▼
-                               Amazon eBay     Zalando  Shopify
 ```
+<img width="1275" height="783" alt="image" src="https://github.com/user-attachments/assets/ca236504-44e6-43c1-9f2c-3bcb637ad250" />
+
 
 ```text
 [MIRO DIAGRAM PLACEHOLDER]
